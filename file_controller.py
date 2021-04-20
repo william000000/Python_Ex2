@@ -3,9 +3,6 @@ File Controller
 """
 PART_SEPARATOR = " "
 INPUT_FILE_NAME = 'items.txt'
-ORDER_BY_SIZE_FILE = 'order_by_size.txt'
-ORDER_BY_SEQUENCE_FILE = 'order_by_sequence.txt'
-ORDER_BY_PRIORITY_FILE = 'order_by_priority.txt'
 
 
 class FileController:
@@ -16,7 +13,7 @@ class FileController:
     def __init__(self):
         self.list_of_data = []
 
-    def load_data(self, file_name):
+    def load_data(self, file_name: str) -> str:
         """
         Load all data from items.txt
         :param file_name:
@@ -39,8 +36,8 @@ class FileController:
                 if priority == 'HIGH':
                     priority = 3
 
-                loaded_obj['sequence'] = sequence
-                loaded_obj['size'] = size
+                loaded_obj['sequence'] = int(sequence)
+                loaded_obj['size'] = int(size)
                 loaded_obj['priority'] = priority
 
                 self.list_of_data.append(loaded_obj)
@@ -50,7 +47,7 @@ class FileController:
         return self.list_of_data
 
     @staticmethod
-    def is_sort_column_valid(sort_column):
+    def is_sort_column_valid(sort_column: str) -> bool:
         """
         This check whether input(sort_column) is valid or Not
         :param sort_column:
@@ -61,7 +58,7 @@ class FileController:
             return True
         return False
 
-    def sort_by_input(self, order_by_desc: str, sort_column: str):
+    def sort_by_input(self, order_by_desc: str, sort_column: str) -> str:
         """
         This function sort the input
         :param order_by_desc:
@@ -69,6 +66,8 @@ class FileController:
         :return:
         """
         order_by_desc = str(order_by_desc)
+        sort_column = sort_column.lower()
+
         if order_by_desc in ('yes', 'y'):
             sorted_data = sorted(self.list_of_data, key=lambda x: x[sort_column], reverse=True)
             self.save_to_file(sort_column, sorted_data)
@@ -78,7 +77,7 @@ class FileController:
             self.save_to_file(sort_column, sorted_data)
 
     @staticmethod
-    def save_to_file(sort_column, data):
+    def save_to_file(sort_column: str, data: str):
         """
         It saves data in a specified file accordingly
         :param sort_column:
@@ -86,13 +85,7 @@ class FileController:
         :return:
         """
         try:
-            if sort_column == 'sequence':
-                file_name = ORDER_BY_SEQUENCE_FILE
-            if sort_column == 'size':
-                file_name = ORDER_BY_SIZE_FILE
-            if sort_column == 'priority':
-                file_name = ORDER_BY_PRIORITY_FILE
-
+            file_name = f'order_by_{sort_column}.txt'
             with open(file_name, 'w') as final_file:
                 for obj in data:
                     sequence = obj['sequence']
